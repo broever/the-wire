@@ -2,7 +2,7 @@ define make-target
 $(1):
 	mkdir -p $$@
 
-$(1)/$(1).opus: $(1).yaml $(1)
+$(1)/$(1).opus:
 	$$(eval video = $$(shell yq r $$< video))
 	$$(eval offset = $$(shell yq r $$< offset))
 	$$(eval duration = $$(shell yq r $$< duration | awk '{print $$$$0 + 1}'))
@@ -13,7 +13,7 @@ $(1)/$(1).opus: $(1).yaml $(1)
 	ffmpeg -i $$(all).opus -ss $$(offset) -t $$(duration) $$@
 	rm -f $$(all).opus
 
-$(1)/$(1).mkv: $(1).yaml $(1)
+$(1)/$(1).mkv:
 	$$(eval video = $$(shell yq r $$< video))
 	$$(eval offset = $$(shell yq r $$< offset))
 	$$(eval duration = $$(shell yq r $$< duration | awk '{print $$$$0 + 1}'))
