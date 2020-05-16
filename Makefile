@@ -42,6 +42,7 @@ define get-gif
 	$(1)/$(1).gif
 endef
 
+.PHONY: prerequisites
 prerequisites: Brewfile
 	brew update >/dev/null
 	brew bundle check || brew bundle
