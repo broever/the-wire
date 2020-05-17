@@ -41,6 +41,18 @@ prerequisites: Brewfile
 	brew update >/dev/null
 	brew bundle check || brew bundle
 
+julius: prerequisites ENVR-v5.4.Dnn.Bin
+	git clone https://github.com/julius-speech/julius.git
+	cd julius
+	./configure --enable-words-int
+	make -j4
+
+ENVR-v5.4.Dnn.Bin:
+	curl -L -o $@.zip https://sourceforge.net/projects/juliusmodels/files/$@.zip/download
+	unzip $@.zip
+	sed -i '' 's/cmnstatic/cvnstatic/' ENVR-v5.4.Dnn.Bin/dnn.jconfig
+	echo "state_prior_log10nize false" >>ENVR-v5.4.Dnn.Bin/dnn.jconfig
+
 TARGETS := $(wildcard *.yaml)
 $(foreach t,$(TARGETS),$(eval $(call make-target,$(strip $(basename $(t) .yaml)))))
 
