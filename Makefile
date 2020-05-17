@@ -3,9 +3,9 @@ $(1):
 	mkdir -p $$@
 
 $(1)/$(1).opus:
-	$$(eval video = $$(shell yq r $$< video))
-	$$(eval offset = $$(shell yq r $$< offset))
-	$$(eval duration = $$(shell yq r $$< duration | awk '{print $$$$0 + 1}'))
+	$$(eval video = $$(shell yq r $(1).yaml video))
+	$$(eval offset = $$(shell yq r $(1).yaml offset))
+	$$(eval duration = $$(shell yq r $(1).yaml duration | awk '{print $$$$0 + 1}'))
 	$$(eval all = $(1)/$(1).audio)
 	youtube-dl --extract-audio --audio-quality 0 --audio-format opus \
 		--no-part --output $$(all).audio \
@@ -14,9 +14,9 @@ $(1)/$(1).opus:
 	rm -f $$(all).opus
 
 $(1)/$(1).mkv:
-	$$(eval video = $$(shell yq r $$< video))
-	$$(eval offset = $$(shell yq r $$< offset))
-	$$(eval duration = $$(shell yq r $$< duration | awk '{print $$$$0 + 1}'))
+	$$(eval video = $$(shell yq r $(1).yaml video))
+	$$(eval offset = $$(shell yq r $(1).yaml offset))
+	$$(eval duration = $$(shell yq r $(1).yaml duration | awk '{print $$$$0 + 1}'))
 	$$(eval all = $(1)/$(1).video)
 	youtube-dl --format bestvideo+bestaudio --merge-output-format mkv \
 		--no-part --output $$(all) \
@@ -32,14 +32,8 @@ $(1)/$(1).gif: $(1)/$(1).mkv
 		-filter_complex "$$(filters) [x]; [x][1:v] paletteuse" -y $$@
 endef
 
-define get-audio
-	$(1)/$(1).opus
-endef
-define get-video
-	$(1)/$(1).mkv
-endef
-define get-gif
-	$(1)/$(1).gif
+define get-target
+	$(1)/$(1).$(2)
 endef
 
 .PHONY: prerequisites
@@ -50,9 +44,9 @@ prerequisites: Brewfile
 TARGETS := $(wildcard *.yaml)
 $(foreach t,$(TARGETS),$(eval $(call make-target,$(strip $(basename $(t) .yaml)))))
 
-.PHONY = audio video gif all
+.PHONY = opus mkv gif all
 .DEFAULT_GOAL := all
-audio: $(foreach t,$(TARGETS),$(call get-audio,$(strip $(basename $(t) .yaml))))
-video: $(foreach t,$(TARGETS),$(call get-video,$(strip $(basename $(t) .yaml))))
-gif: $(foreach t,$(TARGETS),$(call get-gif,$(strip $(basename $(t) .yaml))))
-all: audio video gif
+opus: $(foreach t,$(TARGETS),$(call get-target,$(strip $(basename $(t) .yaml)),opus))
+mkv: $(foreach t,$(TARGETS),$(call get-target,$(strip $(basename $(t) .yaml)),mkv))
+gif: $(foreach t,$(TARGETS),$(call get-target,$(strip $(basename $(t) .yaml)),gif))
+all: opus mkv gif
