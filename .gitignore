@@ -1,5 +1,6 @@
 .DS_Store
 *.opus
+*.wav
 *.mkv
 *.png
 *.gif
