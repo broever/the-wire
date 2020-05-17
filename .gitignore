@@ -1,5 +1,13 @@
+Brewfile.lock.json
+
 .DS_Store
+
 *.opus
+*.wav
 *.mkv
 *.png
 *.gif
+
+deepspeech-venv
+*.pbmm
+*.scorer
