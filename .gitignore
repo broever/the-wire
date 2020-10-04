@@ -1,6 +1,11 @@
 .DS_Store
+
 *.opus
 *.wav
 *.mkv
 *.png
 *.gif
+
+julius
+ENVR-v5.4.Dnn.Bin
+ENVR-v5.4.Dnn.Bin.zip
